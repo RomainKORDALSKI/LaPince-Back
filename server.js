@@ -48,14 +48,13 @@ app.use(errorMiddleware);
 
 // Gestion des connexions Socket.io
 io.on("connection", (socket) => {
-  console.log("A user connected");
-
   // Gestion de la déconnexion
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
+  socket.on("disconnect", () => {});
 });
 
+app.use((req, res, next) => {
+  res.status(404).send("Sorry, page not found!");
+});
 server.listen(port, () => {
   console.log(`🚀 Server ready: http://localhost:${port}`);
 });

@@ -60,7 +60,13 @@ export const getTransactionsByBankAccount = async (req, res) => {
 export const createTransaction = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { id_bank_account, transaction_type, amount, id_category } = req.body;
+    const {
+      id_bank_account,
+      transaction_type,
+      amount,
+      id_category,
+      description,
+    } = req.body;
 
     // Validation des données d'entrée
     if (!id_bank_account || !transaction_type || !amount) {
@@ -97,6 +103,7 @@ export const createTransaction = async (req, res) => {
       id_category,
       transaction_type,
       amount,
+      description,
       transaction_date: new Date(),
     });
 
@@ -129,13 +136,17 @@ export const createTransaction = async (req, res) => {
         } est à ${usedPercentage.toFixed(2)}% utilisé !`;
 
         // Enregistrer la notification dans la base de données
-        await Notification.create({
+        const notification = await Notification.create({
           id_user: userId,
           message,
         });
 
-        // Émettre la notification via Socket.io
+        // Enregistrer l'ID de la notification
+        const notificationId = notification.id;
+
+        // Émettre la notification via Socket.io avec l'ID
         io.emit("notification", {
+          id: notificationId,
           userId,
           message,
         });
