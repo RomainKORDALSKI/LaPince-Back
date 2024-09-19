@@ -59,13 +59,29 @@ export const userController = {
         id_user: newUser.id,
       });
 
+      // Générer le token JWT
+      const token = jwt.sign(
+        {
+          id: newUser.id,
+          email: newUser.email,
+          profilPicture: newUser.profilPicture,
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "24h",
+        }
+      );
+
+      // Retourner la réponse avec le token et les informations utilisateur
       return res.status(201).json({
         message: "Utilisateur créé avec succès",
+        token, // Ajouter le token à la réponse
         user: {
           id: newUser.id,
           email: newUser.email,
           firstName: newUser.firstName,
           lastName: newUser.lastName,
+          profilPicture: newUser.profilPicture,
         },
       });
     } catch (error) {
